@@ -33,6 +33,7 @@ const server = http.createServer((req,res)=>{
 
     //Event listerner we added for writing file
     //Node js internally invoked "data" event then writing will start
+    //invoking happens when chunks of data started coming inside readable CMP
     readFile.on('data', (chunks) => {
         writeFile.write(chunks);
     })
