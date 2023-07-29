@@ -17,10 +17,27 @@ const server = http.createServer((req,res)=>{
     } */
 
     //reading file from server STREAM way
+    /*  
     const readFileStream = fs.createReadStream('sample.txt');
     console.log(readFileStream);
     readFileStream.pipe(res);
+     */
 
+    //Writing file bad way
+    //const readFile = fs.readFileSync('sample.txt');
+    //const writeFile = fs.writeFileSync('dummy.txt',readFile); 
+
+    //writing file using streams
+    const readFile = fs.createReadStream('sample.txt');
+    const writeFile = fs.createWriteStream('dummy.txt');
+
+    //Event listerner we added for writing file
+    //Node js internally invoked "data" event then writing will start
+    readFile.on('data', (chunks) => {
+        writeFile.write(chunks);
+    })
+    
+    res.end();
 
 
 
