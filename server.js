@@ -1,6 +1,7 @@
 import http  from "http";
-import fs, { read } from 'fs';
-import { Readable, Writable } from "stream";
+import fs from 'fs';
+import {pipeline} from "stream";
+import transformingStream from "./uppercaseTransfrom.js";
 
 const server = http.createServer((req,res)=>{
     //Note - by default on home url "/" browser make one more call fro "Faviocon"  - "/favicon"
@@ -60,6 +61,36 @@ const server = http.createServer((req,res)=>{
 
     readStreamForFile.push('hello World ');
      */
+
+
+    const readStreamForFile = fs.createReadStream('sample.txt');
+    const writeStreamForFile = fs.createWriteStream("desireOutput.txt");
+    
+
+
+    //left side of pipe are always reading stream
+    //right side always writing stream
+    //transform stream are both read and write stream
+
+    //Using pipe but in these case we have to handle error on each pipe
+    /* 
+    readStreamForFile
+    .pipe(transformingStream)
+    .on('error',(error) => {
+        console.log(error);
+    })
+    .pipe(writeStreamForFile)
+    .on('error',(error) => {
+        console.log(error);
+    });
+     */
+
+    //In order handle error use pipeline built in method
+    pipeline(readStreamForFile,transformingStream,writeStreamForFile,(error) => {
+        if(error){
+            console.log("Pipeline Error:::::::::::", error);
+        }
+    })
     
     res.end();
 
